@@ -7,6 +7,7 @@ import { NotFoundError, errorHandler, currentUser } from '@hbofficial/common';
 import { createTicketRouter } from './routes/new';
 import { showTicketRouter } from './routes/show';
 import { indexRouter } from './routes';
+import { updateTicketRouter } from './routes/update';
 
 const app = express();
 app.set('trust proxy', true);
@@ -23,6 +24,7 @@ app.use(currentUser);
 app.use(indexRouter);
 app.use(showTicketRouter);
 app.use(createTicketRouter);
+app.use(updateTicketRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();
