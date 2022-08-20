@@ -6,6 +6,7 @@ import cookieSession from 'cookie-session';
 import { NotFoundError, errorHandler, currentUser } from '@hbofficial/common';
 import { createTicketRouter } from './routes/new';
 import { showTicketRouter } from './routes/show';
+import { indexRouter } from './routes';
 
 const app = express();
 app.set('trust proxy', true);
@@ -19,6 +20,7 @@ app.use(
 
 app.use(currentUser);
 
+app.use(indexRouter);
 app.use(showTicketRouter);
 app.use(createTicketRouter);
 
