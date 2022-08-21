@@ -7,6 +7,8 @@ import {
 } from '@hbofficial/common';
 import { body } from 'express-validator';
 import { Ticket } from '../models/ticket';
+import { natsWrapper } from '../nats-wrapper';
+import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 
 const router = express.Router();
 
@@ -35,6 +37,13 @@ router.put(
 
     ticket.set({ title, price });
     await ticket.save();
+
+    await new TicketUpdatedPublisher(natsWrapper.client).publish({
+      title: ticket.title,
+      price: ticket.price,
+      id: ticket.id,
+      userId: ticket.userId,
+    });
 
     res.status(200).send(ticket);
   }
