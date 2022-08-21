@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
 import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { Ticket } from '../models/ticket';
+import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
@@ -23,12 +24,12 @@ router.post(
     const ticket = await Ticket.build({ title, price, userId: id });
     await ticket.save();
 
-    // await new TicketCreatedPublisher(client).publish({
-    //   title: ticket.title,
-    //   price: ticket.price,
-    //   id: ticket.id,
-    //   userId: ticket.userId,
-    // });
+    await new TicketCreatedPublisher(natsWrapper.client).publish({
+      title: ticket.title,
+      price: ticket.price,
+      id: ticket.id,
+      userId: ticket.userId,
+    });
 
     return res.status(201).send(ticket);
   }
